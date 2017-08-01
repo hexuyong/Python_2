@@ -9,7 +9,7 @@ import re
     1、先检查字符串是否合法
     2、简化字符串去++ +- -+ *+ --
     3、去括号、计算
-    
+
 '''
 # 正确的运算符集合
 ture_operator_list = ["*", "%", "/", ".", "*+", "/+", "%+", "//+", "**", "**+", "**-", "(", ")", "+", "-", "+-", "-+",
@@ -27,23 +27,30 @@ def replace_input(_match, _repl, _string):
         :param _string: 原字符串
         :return:        新字符串
     '''
+    #匹配字符前面的字符+原始字符+匹配字符后面的字符
     new_string = _string[0:_match.span()[0]] + _repl + _string[_match.span()[1]:]
+    # print(_string[0:_match.span()[0]])
+    # print(_repl)
+    # print(_string[_match.span()[1]:])
+    # print(_match.span()[0])
+    # print(_repl)
     print('替换后的字符串为 =', new_string)
     return new_string
 
-def operator_multiplyAndAdd(num_1,num_2,operator_str):
+
+def operator_multiplyAndAdd(num_1, num_2, operator_str):
     '''
         加减乘除类的运算
-    :param num_1: 
-    :param num_2: 
-    :param operator_str: 运算符 
+    :param num_1:
+    :param num_2:
+    :param operator_str: 运算符
     :return: 结果
     '''
     value = None
-    print(operator_str,type(operator_str))
+    print(operator_str, type(operator_str))
     if operator_str == '*':
         print('*')
-        value = num_1*num_2
+        value = num_1 * num_2
         pass
     elif operator_str == '/':
         print('/')
@@ -69,11 +76,12 @@ def operator_multiplyAndAdd(num_1,num_2,operator_str):
 
     return value
 
+
 def brackets_normal(input_str):
     '''
         判断括号内是否合法
-        :param input_str: 
-        :return: 
+        :param input_str:
+        :return:
     '''
     if len(input_str) == 0:
         return False
@@ -94,7 +102,7 @@ def brackets_normal(input_str):
 def is_normal(input_str):
     '''
         判断是否有非法字符
-        :param input_str: 
+        :param input_str:
         :return: 不合法就False
     '''
     str_1 = re.search(r'[^\d\+\-\*\%\/\.]+', input_str)  # 除+-*%/.数字之外的元素
@@ -118,10 +126,11 @@ def is_normal(input_str):
             # print('是假的')
             return False
 
+
 def replace_operator(input_str):
     '''
-        替换方程中的++ +- -+ *+ -- 去除开头的+ 
-        :param input_str: 
+        替换方程中的++ +- -+ *+ -- 去除开头的+
+        :param input_str:
         :return: 简化的input_str
     '''
     for i in replace_list:
@@ -140,69 +149,70 @@ def replace_operator(input_str):
 def power_operator(input_str):
     '''
         幂运算
-    :param input_str: 
-    :return: 
+    :param input_str:
+    :return:
     '''
     match_str = re.search(r'(\"[\-]|\")?\d+\.?\d*\"?[\*]{2}((\"\-)|[\+\-])?\d+\.?\d*\"?', input_str)
-    print('\033[35;1m幂运算\033[0m'.center(101,'='))
+    print('\033[35;1m幂运算\033[0m'.center(101, '='))
     # print(match_str)
     if match_str:
         print('\033[32;1m提取 "**" 运算公式为\033[0m', type(match_str.group()))
         match_str_0 = match_str.group()
-        match_str_1 = re.sub(r'\"','',match_str_0)
-        v1 ,v2 = re.split(r'[\*]{2}', match_str_1)
-        value = float(v1)** float(v2)
+        match_str_1 = re.sub(r'\"', '', match_str_0)
+        v1, v2 = re.split(r'[\*]{2}', match_str_1)
+        value = float(v1) ** float(v2)
         # print('v1 = %s,v2 = %s' % (float(v1), float(v2)),type(v1),type(v2),value)
-        value = '"'+ str(value) +'"'
-        input_str = replace_input(match_str,value,input_str)
-
+        value = '"' + str(value) + '"'
+        input_str = replace_input(match_str, value, input_str)
 
         return power_operator(input_str)
     else:
 
-        input_str = re.sub(r'\"','',input_str)
+        input_str = re.sub(r'\"', '', input_str)
         input_str = replace_operator(input_str)
         print('\033[32;1m幂运算后为【%s】\033[0m' % (input_str))
         return input_str
-
 
 
 def multiply_operator(input_str):
     '''
         乘 除 取余 取整运算
     :param input_str:
-    :return: 
+    :return:
     '''
 
     print('\033[35;1m乘、除、取余运算\033[0m'.center(97, '='))
-    match = re.search(r'\d+\.?\d*[\*\%\/\//]{1}[\-]?\d+\.?\d*',input_str)
+    match = re.search(r'\d+\.?\d*[\*\%\/\//]{1}[\-]?\d+\.?\d*', input_str)
+    #找到第一个匹配的数学表达式
     # print(match)
     if match:
         match_str = match.group()
-        operator_str = re.search(r'[\*\%/\//]',match_str).group()
-        v1,v2 = re.split(r'[\*\%\/\//]',match_str)
+        #获取第一个数学表达式的组
+        operator_str = re.search(r'[\*\%/\//]', match_str).group()
+        #匹配第一阶梯的运算符号* % / //
+        v1, v2 = re.split(r'[\*\%\/\//]', match_str)
+        #运算符进行切割，然后把值给v1,v2
+
         # print('v1 =%s,v2 =%s'%(v1,v2))
-        value = str(operator_multiplyAndAdd(float(v1),float(v2),operator_str))
-
-        print('\033[32;1m运算结果为【%s】\033[0m'%value)
-        input_str = replace_input(match,value,input_str)
-
+        value = str(operator_multiplyAndAdd(float(v1), float(v2), operator_str))
+        #value 为第一阶梯的运算结果
+        print('\033[32;1m运算结果为【%s】\033[0m' % value)
+        input_str = replace_input(match, value, input_str)
+        #input_str是真实的运算结果，然后循环运算，直到所有匹配为空
         return multiply_operator(input_str)
         pass
 
     else:
-        print('\033[32;1m乘除运算后为【%s】\033[0m'%(input_str))
+        print('\033[32;1m乘除运算后为【%s】\033[0m' % (input_str))
         input_str = replace_operator(input_str)
         return input_str
-
-
 
 
 def add_operator(input_str):
     '''
         加 减 运算
-    :param input_str: 
-    :return: 
+    :param input_str:
+    :return:
     '''
     print('\033[35;1m加减运算\033[0m'.center(100, '='))
     match = re.search(r'\-?\d+\.?\d*[\+\-]{1}[\-]?\d+\.?\d*', input_str)
@@ -210,15 +220,20 @@ def add_operator(input_str):
     if match:
         match_str = match.group()
         minus_str = ''
+        #对正负进行判断
         if match_str.startswith('-'):
             match_str = match_str[1:]
             minus_str = '-'
+        #提取运算符号
         operator_str = re.search(r'[\+\-]', match_str).group()
+        #用+-进行切割
         v1, v2 = re.split(r'[\+\-]', match_str)
         # print('v1 =%s,v2 =%s' % (v1, v2))
-        value = str(operator_multiplyAndAdd(float(minus_str+v1), float(v2), operator_str))
+        #进行+-乘除雷的运算
+        value = str(operator_multiplyAndAdd(float(minus_str + v1), float(v2), operator_str))
 
         # print('\033[32;1m运算结果为【%s】\033[0m' % value)
+        #得出结果
         input_str = replace_input(match, value, input_str)
 
         return add_operator(input_str)
@@ -230,33 +245,33 @@ def add_operator(input_str):
         return input_str
 
 
-
 def operation_value(input_str):
     '''
         运算 顺序 ** -> */%// -> +-
-    :param input_str: 
-    :return:返回运算的结果 
+    :param input_str:
+    :return:返回运算的结果
     '''
     ans = power_operator(input_str)
     ans = multiply_operator(ans)
     ans = add_operator(ans)
     return ans
 
+
 def brackets_calculate(input_str):
     '''
         对表达式括号内的方程进行运算
-        :param input_str: 
+        :param input_str:
         :return: 将括号内的运算结果进行替换,然后递归去除括号
     '''
     print('\033[35;1m去除括号\033[0m'.center(100, '='))
-    match = re.search(r'\([^()]+\)', input_str)
-
+    match = re.search(r'\([^()]+\)', input_str)     #匹配里面括号的内容，并返回第一个匹配到的内容
 
     if match:
-        match_str = match.group()[1:-1] #去括号
+        #假如match有值
+        match_str = match.group()[1:-1]  # 去括号，取得里面的值
         value = operation_value(match_str)
         value = '"' + str(value) + '"'
-        input_str = replace_input(match,value,input_str)
+        input_str = replace_input(match, value, input_str)
 
         return brackets_calculate(input_str)
     else:
@@ -264,9 +279,10 @@ def brackets_calculate(input_str):
         print('\033[32;1m去除括号后为【%s】\033[0m' % (input_str))
         return input_str
 
+
 # brackets_calculate('(2+3)')
 
-def biubiubiu():
+def cal():
     print('\033[1;36;0m Hello,Welcome!\033[0m'.center(100, '*'))
     while True:
 
@@ -290,5 +306,4 @@ def biubiubiu():
             print('\n')
             print('\033[31;1m你输入有误!请重新输入\033[0m'.center(96, ' '))
             print('\n')
-
-biubiubiu()
+cal()
