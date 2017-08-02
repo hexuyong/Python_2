@@ -1,9 +1,5 @@
 #-*- coding:UTF-8 -*-
 # author:hexy
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-#version:3.5.2
-#author:wangeq
 
 import sys,os
 import json
